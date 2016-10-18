@@ -1,0 +1,31 @@
+*{
+    font-family: "lucida grande", "lucida sans unicode", lucida, helvetica, "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif;
+}
+body, html {
+    height: 100%;
+}
+
+
+.infoView{
+    height: 203px;
+    position: relative;
+}
+.infoView .background{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+}
+.infoView .info{
+    position: absolute;
+    bottom: 0;
+    padding: 5px 15px;
+}
+.side-nav .collapsible-header{
+    padding: 0 32px;
+}
+.side-nav.collapsible{
+    border: none;
+}
