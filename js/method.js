@@ -3,6 +3,7 @@ $(document).ready(function() {
         indicators: false,
         full_width: true,
     });
+    $('.slider').slider('next');
     $('.slider').slider('pause');
     $(".button-collapse").sideNav({
         menuWidth: 360,
