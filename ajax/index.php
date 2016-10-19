@@ -28,7 +28,7 @@ $date = request($request);
 if (!array_key_exists('info',$request)) {
     $data = new data();
     $json = $data->where("date = ".$date)->field("date,content,search,video")->limit(1)->select();
-    $attr = explode('，',$json['content']);
+    $attr = explode('，',$json['content'], 2);
     $json['title'] = $attr[0];
     $json['content'] = $attr[1];
     $json = json_encode($json);
