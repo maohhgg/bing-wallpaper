@@ -29,8 +29,15 @@ if (!array_key_exists('info',$request)) {
     $data = new data();
     $json = $data->where("date = ".$date)->field("date,content,search,video")->limit(1)->select();
     $attr = explode('，',$json['content'], 2);
-    $json['title'] = $attr[0];
-    $json['content'] = $attr[1];
+    if (array_key_exists(1,$attr)) {
+        $json['title'] = $attr[0];
+        $json['content'] = $attr[1];
+    }
+    $pos = strpos($json['content'], "(©");
+    if ($pos != false) {
+        $json['title'] = substr($json['content'],0,$pos-1);
+        $json['content'] = substr($json['content'],$pos);
+    }
     $json = json_encode($json);
 } else {
     $cnhp = new cnhp();

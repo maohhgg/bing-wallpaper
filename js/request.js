@@ -4,7 +4,8 @@
 var date, json;
 
 dateSimple = new Date();
-window.date = dateSimple.getFullYear() + '/' + (dateSimple.getMonth() + 1) + '/' + dateSimple.getDate();
+window.date = dateSimple.getFullYear() + '/' + (dateSimple.getMonth() + 1) + '/' +
+        (dateSimple.getDate() < 10 ? 0+""+dateSimple.getDate() : dateSimple.getDate());
 window.status = null;
 window.error = null;
 
@@ -12,61 +13,57 @@ function slides() {
     var target = null;
 }
 
+slide = new slides();
+slide.target = $("#slides");
+
 function videoLoop(video) {
     if (video.ended)
         video.play();
 }
 
-function ajaxUpdate(date,callback) {
-    var request = $.ajax({
-        url: window.location.href + "/ajax",
-        data: "main=" + date.replace(/\//g, ""),
-        statusCode: {
-            200: function() {
-                window.status = 200;
-            },
-            404: function() {
-                window.status = 404;
-            },
-            405: function() {
-                window.status = 405;
-            },
-        }
-    });
-    request.done(function(data, status) {
-        if (status) {
-            slide = new slides();
-            slide.target = $("#slides");
-            slide.addChlid(data);
-        }
-    });
-    request.fail(function(error) {
-        window.error = error;
-        console.log(window.error);
-        Materialize.toast(error, 4000)
-    });
+function ajaxUpdate() {
+    var request = null;
 }
+ajaxUpdate.prototype.ajaxDate = function (date) {
+    this.request = $.ajax({
+       url: window.location.href + "ajax",
+       data: "main=" + date.replace(/\//g, ""),
+       statusCode: {
+           200: function() {
+               window.status = 200;
+           },
+           404: function() {
+               window.status = 404;
+           },
+           405: function() {
+               window.status = 405;
+           },
+       }
+   });
+};
 
 slides.prototype.addChlid = function(data) {
     data = jQuery.parseJSON(data);
     console.log(data);
 
-    this.target.append('<li id="' + data.date +'" ></li>');
+    this.target.append('<li id="' + data.date + '" ></li>');
 
     var child = this.target.find('#' + data.date);
     var img = data.date;
-
     if (data.video != '0')
         img += "_video_image";
 
     child.append('<img src=" ./resource/' + img + '.jpg" >');
+    var align = ["left", "right", "center"];
     child.append('\
-    <div class="caption left-align" >\
+    <div class="caption ' + align[parseInt(Math.random() * 3)] + '-align" >\
         <h3>' + data.title + '</h3>\
         <h6 class="light grey-text text-lighten-3">' + data.content + '</h6>\
     </div>');
 
-    $('.slider').slider();
+    $('.slider').slider({
+        indicators: false,
+    });
     $('.slider').slider('pause');
     if (data.video != '0')
         this.addVideo(data);
@@ -92,7 +89,7 @@ var controls = {
     date: window.date,
     slides: [],
     previousDay: function() {
-        if (this.showDate == ""){
+        if (this.showDate == "") {
             this.showDate = this.date;
             if (this.slides.length == 0) {
                 this.slides.push(this.date);
@@ -100,43 +97,62 @@ var controls = {
         }
 
         dateSimple = new Date(new Date(this.showDate) - 24 * 60 * 60 * 1000);
-        preDate = dateSimple.getFullYear() + '/' + (dateSimple.getMonth() + 1) + '/' + dateSimple.getDate();
-
-        if (!this.slides.includes(preDate.toString())){
-            ajaxUpdate(preDate);
+        preDate = dateSimple.getFullYear() + '/' + (dateSimple.getMonth() + 1) + '/' +
+                (dateSimple.getDate() < 10 ? 0+""+dateSimple.getDate() : dateSimple.getDate());
+        console.log(this.slides);
+        console.log(this.slides.includes(preDate.toString()));
+        if (!this.slides.includes(preDate.toString())) {
+            ajax = new ajaxUpdate();
+            ajax.ajaxDate(preDate);
+            ajax.request.done(function(data, status) {
+                if (status) {
+                    slide.addChlid(data);
+                    $('.slider').slider('start');
+                    $('.slider').slider('next');
+                    $('.slider').slider('pause');
+                }
+            });
             this.slides.push(preDate);
         }
+        console.log(ajaxUpdate);
         this.showDate = preDate;
-        $('.slider').slider('start');
-        $('.slider').slider('next');
-        $('.slider').slider('pause');
+
     },
     nextDay: function() {
-        if (this.showDate == ""){
+        if (this.showDate == "") {
             this.showDate = this.date;
             if (this.slides.length == 0) {
                 this.slides.push(this.date);
             }
         }
+        console.log(this);
 
-        dateSimple = new Date(new Date(this.showDate) + 24 * 60 * 60 * 1000);
-        nextDate = dateSimple.getFullYear() + '/' + (dateSimple.getMonth() + 1) + '/' + dateSimple.getDate();
-        if (dateSimple == new Date(new Date(this.date) + 24 * 60 * 60 * 1000)) {
+        dateSimple = new Date(new Date(this.showDate) + 25 * 60 * 60 * 1000);
+        console.log(dateSimple);
+        if (dateSimple > new Date(new Date(this.date) + 48 * 60 * 60 * 1000)) {
             Materialize.toast("超出日期范围", 4000);
-            return ;
+            return;
         }
-        console.log(nextDate);
-        console.log(this.slides.includes(nextDate.toString()));
-        if (!this.slides.includes(nextDate)){
-            ajaxUpdate(nextDate);
-            this.slides.push(nextDate);
+        nextDate = dateSimple.getFullYear() + '/' + (dateSimple.getMonth() + 1) + '/' +
+                (dateSimple.getDate() < 10 ? 0+""+dateSimple.getDate() : dateSimple.getDate());
 
+        console.log(this.slides);
+        console.log(this.slides.includes(nextDate.toString()));
+        if (!this.slides.includes(nextDate)) {
+            ajax = new ajaxUpdate();
+            ajax.ajaxDate(nextDate);
+            ajax.request.done(function(data, status) {
+                if (status) {
+                    slide.addChlid(data);
+                    $('.slider').slider('start');
+                    $('.slider').slider('prev');
+                    $('.slider').slider('pause');
+                }
+            });
+            this.slides.push(nextDate);
         }
-        Materialize.toast(nextDate+"执行了", 4000);
+        Materialize.toast(nextDate + "执行了", 4000);
         this.showDate = nextDate;
-        $('.slider').slider('start');
-        $('.slider').slider('prev');
-        $('.slider').slider('pause');
     },
     chooseData: function() {
 
@@ -146,8 +162,13 @@ var controls = {
     }
 }
 
-ajaxUpdate(window.date);
-
+ajax = new ajaxUpdate();
+ajax.ajaxDate(window.date);
+ajax.request.done(function(data,status){
+    if (status) {
+        slide.addChlid(data);
+    }
+})
 $('.previousDay').get(0).addEventListener('click', function() {
     controls.previousDay();
     console.log(controls);

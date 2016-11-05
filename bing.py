@@ -81,7 +81,7 @@ def download(url, file_path, date):
 
 if __name__ == '__main__':
     connection = pymysql.connect(
-        "222.222.222.200", "root", "root", "bing", use_unicode=True, charset="utf8")
+        "127.0.0.1", "root", "root", "bing", use_unicode=True, charset="utf8")
     cursor = connection.cursor()
 
     img, intro, date, vid, vid_img = find_json(

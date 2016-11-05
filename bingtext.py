@@ -110,7 +110,7 @@ def save_json_to_sql(db,cursor,json):
         log("SQL Error: " + str(e))
 
 if __name__ == '__main__':
-    connection = pymysql.connect("222.222.222.200","root","root","bing",use_unicode=True, charset="utf8")
+    connection = pymysql.connect("127.0.0.1","root","root","bing",use_unicode=True, charset="utf8")
     cursor = connection.cursor()
     date = datetime.datetime.now() - datetime.timedelta(days=-1)
     date = str(date.strftime('%Y%m%d'))

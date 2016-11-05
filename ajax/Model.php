@@ -19,7 +19,7 @@ class Model{
     protected $reseut = [];
 
     function __construct() {
-        $this->DB = new PDO('mysql:host=222.222.222.200;port=3306;dbname=bing;charset=UTF8;','root','root', array(PDO::ATTR_PERSISTENT=>true));
+        $this->DB = new PDO('mysql:host=127.0.0.1;port=3306;dbname=bing;charset=UTF8;','root','root', array(PDO::ATTR_PERSISTENT=>true));
     }
 
     public function data($data, $value = null){

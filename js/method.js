@@ -1,7 +1,6 @@
 $(document).ready(function() {
     $('.slider').slider({
         indicators: false,
-        full_width: true,
     });
     $('.slider').slider('next');
     $('.slider').slider('pause');
@@ -11,7 +10,7 @@ $(document).ready(function() {
         closeOnClick: true
     });
     $('.collapsible').collapsible({
-        accordion : false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
+        accordion: false // A setting that changes the collapsible behavior to expandable instead of the default accordion style
     });
     // var id = "#20161011"
     // $(id).ready(function(){
