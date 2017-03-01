@@ -10,8 +10,7 @@ import requests
 
 def log(content):
     code = open('/var/www/bing/log/bing.log', 'a')
-    code.writelines(time.strftime("%Y/%m/%d %H:%M:%S",
-                                  time.localtime()) + ": " + content + "\r\n")
+    code.writelines(time.strftime("%Y/%m/%d %H:%M:%S",time.localtime()) + ": " + content + "\r\n")
     code.close()
 
 # Mysql
@@ -67,7 +66,7 @@ def download(url, file_path, date):
         if not os.path.exists(file_path):
             os.makedirs(file_path)
         suffix = url[url.rfind('.'):]
-        content = requests.get(url).content
+        content = requests.get('http://s.cn.bing.net/' + url).content
         fname = file_path + date + suffix
         print(fname)
         code = open(fname, 'wb')
