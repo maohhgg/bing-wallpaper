@@ -12,7 +12,7 @@ from pyquery import PyQuery as pqy
 
 def log(content):
     code = open('/var/www/bing/log/bing.log', 'a')
-    code.writelines(time.strftime("%Y/%m/%d %H:%M:%S", time.localtime()) + ": " + content + "\r")
+    code.writelines(time.strftime("%Y/%m/%d %H:%M:%S", time.localtime()) + "-- bingtext.py: " + content + "\r\n")
     code.close()
 
 def rand_name(n):

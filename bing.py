@@ -10,7 +10,7 @@ import requests
 
 def log(content):
     code = open('/var/www/bing/log/bing.log', 'a')
-    code.writelines(time.strftime("%Y/%m/%d %H:%M:%S",time.localtime()) + ": " + content + "\r\n")
+    code.writelines(time.strftime("%Y/%m/%d %H:%M:%S",time.localtime()) + " -- bing.py: " + content + "\r\n")
     code.close()
 
 # Mysql
@@ -59,14 +59,17 @@ def find_json(json_data):
     return image['url'], image['copyright'], image['enddate'], vid, vid_img
 
 
-def download(url, file_path, date):
+def download(url, file_path, date,stat):
     try:
         if not file_path.endswith('/'):
             file_path += '/'
         if not os.path.exists(file_path):
             os.makedirs(file_path)
         suffix = url[url.rfind('.'):]
-        content = requests.get('http://s.cn.bing.net/' + url).content
+        if stat == 1 :
+            content = requests.get('http:' + url).content
+        elif stat == 0:
+            content = requests.get('http://s.cn.bing.net/' + url).content
         fname = file_path + date + suffix
         print(fname)
         code = open(fname, 'wb')
@@ -85,9 +88,11 @@ if __name__ == '__main__':
 
     img, intro, date, vid, vid_img = find_json(
         get_bing_json(-1, connection, cursor))
+    log("img:"+img)
     if vid is not None:
-        download(vid, '/var/www/bing/resource/', date + '_video')
-        download(vid_img, '/var/www/bing/resource/', date + '_video_image')
-    download(img, '/var/www/bing/resource', date)
+        log("vid:"+vid+"\n\rvid_img:"+vid_img)
+        download(vid, '/var/www/bing/resource/', date + '_video',1)
+        download(vid_img, '/var/www/bing/resource/', date + '_video_image',1)
+    download(img, '/var/www/bing/resource', date,0)
 
     connection.close()
